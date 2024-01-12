@@ -1,0 +1,100 @@
+<body>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+  ></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.5/axios.min.js"></script>
+  <script>
+    function mainData() {
+      return {
+        data: [],
+        searchString: "",
+        async getData() {
+          try {
+            const {data} = await axios({
+              method: "GET",
+              url: "https://randomuser.me/api?results=10&page=1",
+            });
+            const resultData = data.results
+            let value = []
+            for (let i = 0; i < resultData.length; i++) {
+                const pictData = []
+                pictData.push(resultData[i].picture.large)
+                pictData.push(resultData[i].picture.medium)
+                pictData.push(resultData[i].picture.thumbnail)
+               let varData = {
+                    id: resultData[i].id.value != null ? `${resultData[i].id.value}` : `${i}`,
+                    name: `${resultData[i].name.title} ${resultData[i].name.first} ${resultData[i].name.last}`,
+                    umur: resultData[i].dob.age,
+                    alamat: `${resultData[i].location.street.number}, ${resultData[i].location.street.name}, ${resultData[i].location.city}, ${resultData[i].location.state}, ${resultData[i].location.country}`,
+                    email: resultData[i].email,
+                    telepon1: resultData[i].cell,
+                    telepon2: resultData[i].phone,
+                    picture: pictData
+                }
+                value.push(varData)
+              }
+            this.data = value
+          } catch (error) {}
+        },
+
+        async searchData(e){
+            try {
+              // var searchName = data.map(el => el.name)
+              // let check = (searchName.indexOf(e) > -1)
+                // console.log(check)
+                console.log(e)
+            } catch (err) {}
+        },
+
+        init() {
+          this.getData();
+        },
+      };
+    }
+  </script>
+
+  <div class="text-2xl m-5" x-data="mainData()">
+    <h1 class="font-extrabold mb-2">LIST</h1>
+    <div class="grid grid-cols-2 justify-between">
+        <div>
+            <input class="border-2 px-2 text-base" placeholder="search" x-model="searchString" />
+            <button class="bg-gray-200 rounded-xl p-2 text-md text-base" @click="searchData(searchString)">Search</button>
+        </div>
+        <div class="flex justify-end">
+            <button class="bg-gray-200 rounded-xl p-2 text-base">Add New+</button>
+        </div>
+    </div>
+    <div>
+      <table class="table-fixed my-5">
+        <thead class="bg-gray-200">
+          <tr>
+            <th>Nama</th>
+            <th>Umur</th>
+            <th>Alamat</th>
+            <th>Email</th>
+            <th>No Telepon 1</th>
+            <th>No Telepon 2</th>
+            <th>Gambar</th>
+          </tr>
+        </thead>
+        <tbody class="bg-gray-50">
+            <template x-for="d in data">
+                <tr>
+                    <td x-text="d.name"></td>
+                    <td x-text="d.umur"></td>
+                    <td x-text="d.alamat"></td>
+                    <td x-text="d.email"></td>
+                    <td x-text="d.telepon1"></td>
+                    <td x-text="d.telepon2"></td>
+                    <td>
+                        <img :src="d.picture[2]" alt="" />
+                    </td>
+                </tr>
+            </template>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>

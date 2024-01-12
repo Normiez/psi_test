@@ -1,0 +1,1 @@
+select u.id as User_id,c.id as Company_id,u.Nama, u.Email, u.telp as Telp, c.Company_code, c.Company_name from db.users u inner join db.company c on u.id = c.User_id;
